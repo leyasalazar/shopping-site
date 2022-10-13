@@ -77,8 +77,6 @@ def add_to_cart(melon_id):
         session['cart'] = {}
         cart = session['cart']
 
-    print("CART: ", cart)
-
     # - check if the desired melon id is the cart, and if not, put it in
     # - increment the count for that melon id by 1
     if melon_id in cart:
@@ -86,9 +84,12 @@ def add_to_cart(melon_id):
     else:
         cart[melon_id] = 1
     # - flash a success message
+    flash("Melon is added to your cart.")
+    print("CART: ", cart)
     # - redirect the user to the cart page
     
-    return "Oops! This needs to be implemented!"
+    # return render_template("cart.html")
+    return redirect("/cart")
 
 
 @app.route("/cart")
@@ -100,9 +101,32 @@ def show_shopping_cart():
     # The logic here will be something like:
     #
     # - get the cart dictionary from the session
+    cart = session["cart"]
+
     # - create a list to hold melon objects and a variable to hold the total
     #   cost of the order
+    # melon = melons.get_by_id(melon_id)
+    melons_list = []
+    # for melon in cart.keys():
+    #     melon_item = melons.get_by_id(melon)
+    #     # melon_item.qty = cart['qty']
+    #     melons_list.append(melon_item)
+
+    for melon, qty in cart.items():
+        melon_item = melons.get_by_id(melon)
+        melon_item.qty = qty
+        print(melon_item)
+        total_price = melon_item.price * qty
+        melon_item.total_price = total_price
+        melons_list.append(melon_item)
+        
+    print(type(melons_list[0]))
+    
+    print("Melon: ", melons_list)
+
+
     # - loop over the cart dictionary, and for each melon id:
+
     #    - get the corresponding Melon object
     #    - compute the total cost for that type of melon
     #    - add this to the order total
